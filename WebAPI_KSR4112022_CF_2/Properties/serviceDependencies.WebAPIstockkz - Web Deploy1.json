@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "apis1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/WebAPIKstockkzapi/apis/WebAPIKSR4112022CF2",
+      "type": "apis.azure"
+    }
+  }
+}

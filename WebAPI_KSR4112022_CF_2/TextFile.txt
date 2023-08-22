@@ -1,0 +1,86 @@
+﻿
+                        _context.Goodrests.RemoveRange(_context.Goodrests);
+                        await _context.SaveChangesAsync();
+
+
+                        int Qty_sum=0, Qty_sum_Goodincomes = 0, Qty_sum_Goodmoves_From = 0, Qty_sum_Goodmoves_ToWhere = 0, ii = -1;
+                        int i_good_names = -1;
+                        var goods_tb = _context.Goods .OrderBy(g => g.NameGood);
+                        string[] good_names = new string[_context.Goods.Count()];
+                        foreach (Good g in goods_tb) { i_good_names++; good_names[i_good_names] = g.NameGood;  }
+
+                        int i_stock_names = -1;
+                        var stocks_tb = _context.Stocks .OrderBy(g => g.NameStock);
+                        string[] stock_names = new string[_context.Stocks.Count()];
+                        foreach (Stock g in stocks_tb) { i_stock_names++; stock_names[i_stock_names] = g.NameStock; }
+
+                        for (int i = 0; i <= i_good_names; i++)
+
+                        {
+                            for (int j = 0; j <= i_stock_names; j++)
+                            {
+                                Qty_sum_Goodincomes = _context.Goodincomes.Where(p => p.NameGood == good_names[i]
+                                && p.NameStock == stock_names[j])  .Sum(p => p.Qty);
+                                Qty_sum_Goodmoves_From = _context.Goodmoves.Where(p =>p.NameGood == good_names[i]
+                                && p.NameStockFrom == stock_names[j]) .Sum(p => p.Qty);
+                                Qty_sum_Goodmoves_ToWhere = _context.Goodmoves.Where(p =>p.NameGood == good_names[i]
+                                && p.NameStockTowhere == stock_names[j]) .Sum(p => p.Qty);
+                                Qty_sum = Qty_sum_Goodincomes - Qty_sum_Goodmoves_From + Qty_sum_Goodmoves_ToWhere;
+                                if (Qty_sum > 0)
+                                {
+                                    Goodrest GoodRestAdded = new()
+                                    {
+                                        NameGood = good_names[i],
+                                        NameStock = stock_names[j],
+                                        Qty = Qty_sum,
+                                    };
+                                    _context.Goodrests.Add(GoodRestAdded);
+
+                                }
+                            }
+                        }
+
+                        await _context.SaveChangesAsync();
+            List<Good> good_l = new List<Good>(_context.Goods);
+            List<Stock> stock_l = new List<Stock>(_context.Stocks);
+            List<Goodincome> goodincomes_l = new List<Goodincome>(_context.Goodincomes);
+            List<Goodmove> goodmoves_l = new List<Goodmove>(_context.Goodmoves);
+            List<Goodrest> goodrests_l = new List<Goodrest>();
+
+
+            foreach (Good g in good_l)
+            {
+                foreach (Stock s in stock_l)
+                {
+                    int Qty_sum = 0;
+                    if (goodincomes_l.Any(p => p.NameGood == g.NameGood && p.NameStock == s.NameStock))
+                    {
+                        Qty_sum = goodincomes_l.Where(p => p.NameGood == g.NameGood
+                                        && p.NameStock == s.NameStock).Sum(p => p.Qty);
+                    };
+                    if (goodmoves_l.Any(p => p.NameGood == g.NameGood
+                            && p.NameStockFrom == s.NameStock))
+                    {
+                        Qty_sum = -goodmoves_l.Where(p => p.NameGood == g.NameGood
+                            && p.NameStockFrom == s.NameStock).Sum(p => p.Qty);
+                    };
+                    if (goodmoves_l.Any(p => p.NameGood == g.NameGood
+                            && p.NameStockTowhere == s.NameStock))
+                    {
+                        Qty_sum = +goodmoves_l.Where(p => p.NameGood == g.NameGood
+                            && p.NameStockTowhere == s.NameStock).Sum(p => p.Qty);
+                    }
+
+                    if (Qty_sum > 0)
+                    {
+                        Goodrest goodrests_l1 = new Goodrest();
+                        goodrests_l1.NameGood = g.NameGood;
+                        goodrests_l1.NameStock = s.NameStock;
+                        goodrests_l1.Qty = Qty_sum;
+
+                        goodrests_l.Add(goodrests_l1);
+                        //            Console.WriteLine($"Sum: {Qty_sum_Goodincomes}");
+                    }
+                }
+            }
+
