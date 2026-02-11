@@ -2,6 +2,21 @@
 using Microsoft.Extensions.Options;
 using WebAPI_KSR4112022_CF_2.Models;
 
+/*
+1)VSC connect by SSH >< on the left below corner and login@ip server
+2)Create Dockerfile where .sln file
+3)Create .dockerignore file
+4)git add . git commit -m "commit" git push origin master on the VSC
+5)install sudo apt install -y aspnetcore-runtime-6.0 
+6)in server git pull origin master or clone for the first time and cd WebAPI_KSR4112022_CF_2
+7)run buildig sudo docker build -t asp-api-prod
+8)Run in production sudo docker run -d   --name asp-api-container   -p 5000:5000   --restart always   asp-api-prod
+or in Development sudo docker run -d   --name asp-api-container   -p 5000:5000   -e ASPNETCORE_ENVIRONMENT=Development   --restart always   asp-api-prod
+9)we can see sudo docker logs asp-api-container
+10)
+
+*/
+
 //Подготовка инструментов (builder): Программа берет «чемодан с инструментами» для создания веб-приложения.
 var builder = WebApplication.CreateBuilder(args);
 
