@@ -1,5 +1,5 @@
 # 1. Сборка (SDK 6.0)
-FROM ://mcr.microsoft.com AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 # Копируем файл проекта из подпапки во внутреннюю папку Docker
@@ -15,7 +15,7 @@ WORKDIR "/src/WebAPI_KSR4112022_CF_2"
 RUN dotnet publish -c Release -o /app/publish
 
 # 2. Запуск (Runtime 6.0)
-FROM ://mcr.microsoft.com
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
